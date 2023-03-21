@@ -7,7 +7,9 @@ public class Engine
     WebSocket ws;
     Shape drawingShape = Shape.Rectangle;
 
-    List<Drawable> objects = new();
+    List<Paint> paintObjects = new();
+
+    bool listLock = false;
 
     public Engine()
     {
@@ -46,10 +48,13 @@ public class Engine
             Clicks();
             Keys();
 
-            foreach (Drawable d in objects)
+            while (listLock) ;
+            listLock = true;
+            foreach (Paint p in paintObjects)
             {
-                d.Draw();
+                p.Draw();
             }
+            listLock = false;
 
             Raylib.EndDrawing();
         }
@@ -81,18 +86,26 @@ public class Engine
 
         if (Raylib.IsMouseButtonDown(MouseButton.MOUSE_BUTTON_LEFT))
         {
-            Drawable added = new(pos, drawingShape);
-            string serJson = JsonSerializer.Serialize<Drawable>(added);
-            objects.Add(added);
+            Paint added = new(pos.X, pos.Y);
+
+            paintObjects.Add(added);
+
+            string serJson = JsonSerializer.Serialize<Paint>(added);
             ws.Send(serJson);
         }
     }
 
     void OnMessage_function(object sender, MessageEventArgs e)
     {
+        listLock = true;
+
         string data = e.Data;
         Console.WriteLine("Recieved: " + data);
 
-        objects.Add(JsonSerializer.Deserialize<Drawable>(data));
+        Paint p = JsonSerializer.Deserialize<Paint>(data);
+        paintObjects.Add(p);
+
+        listLock = false;
     }
+
 }
