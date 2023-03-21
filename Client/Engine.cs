@@ -10,6 +10,7 @@ public class Engine
     List<Paint> paintObjects = new();
 
     bool listLock = false;
+    bool settings = false;
 
     public Engine()
     {
@@ -42,22 +43,40 @@ public class Engine
     {
         while (!Raylib.WindowShouldClose())
         {
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.WHITE);
-
-            Clicks();
-            Keys();
-
-            while (listLock) ;
-            listLock = true;
-            foreach (Paint p in paintObjects)
+            if (settings) Settings();
+            else
             {
-                p.Draw();
-            }
-            listLock = false;
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Color.WHITE);
 
-            Raylib.EndDrawing();
+                Clicks();
+                Keys();
+
+                while (listLock) ;
+                listLock = true;
+                foreach (Paint p in paintObjects)
+                {
+                    p.Draw();
+                }
+                listLock = false;
+
+                Raylib.EndDrawing();
+            }
         }
+    }
+
+    private void Settings()
+    {
+        Raylib.BeginDrawing();
+        Raylib.ClearBackground(Color.BLACK);
+
+
+
+        Raylib.EndDrawing();
+
+        KeyboardKey key = (KeyboardKey)Raylib.GetKeyPressed();
+
+        if (key == KeyboardKey.KEY_S) settings = !settings;
     }
 
     private void Keys()
@@ -77,7 +96,15 @@ public class Engine
             drawingShape = (Shape)index;
         }
 
-        if (key == KeyboardKey.KEY_C) ws.Send("Clear");
+        if (key == KeyboardKey.KEY_C)
+        {
+            ws.Send("Clear");
+            paintObjects = new();
+        }
+        if (key == KeyboardKey.KEY_S)
+        {
+            settings = !settings;
+        }
     }
 
     private void Clicks()
