@@ -86,7 +86,7 @@ public class Engine
 
         if (Raylib.IsMouseButtonDown(MouseButton.MOUSE_BUTTON_LEFT))
         {
-            Paint added = new(pos.X, pos.Y);
+            Paint added = new(pos.X, pos.Y, (int)drawingShape);
 
             paintObjects.Add(added);
 
