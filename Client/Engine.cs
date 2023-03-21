@@ -97,6 +97,7 @@ public class Engine
 
     void OnMessage_function(object sender, MessageEventArgs e)
     {
+        while (listLock) ;
         listLock = true;
 
         string data = e.Data;
