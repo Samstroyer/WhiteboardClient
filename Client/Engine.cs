@@ -19,17 +19,16 @@ public class Engine
 
     public void Connect()
     {
-        Console.WriteLine("Enter the ip adress : port only!");
-        Console.WriteLine("(Example: '100.100.100.100:3000')");
+        Console.WriteLine("Enter the ip adress of host");
 
     Restart:
         string ip = Console.ReadLine();
 
         try
         {
-            ws = new WebSocket("ws://10.151.172.192:3000/whiteboard");
-            ws.Connect();
+            ws = new WebSocket("ws://" + ip + ":3000/whiteboard");
             ws.OnMessage += OnMessage_function;
+            ws.Connect();
         }
         catch (Exception e)
         {
